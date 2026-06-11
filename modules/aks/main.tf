@@ -44,5 +44,10 @@ resource "azurerm_kubernetes_cluster_node_pool" "pool1" {
   vm_size               = "Standard_D2s_v3"
   node_count            = 2
   vnet_subnet_id        = var.subnet_id
+
+  lifecycle {
+    ignore_changes = [upgrade_settings]
+  }
+
 }
 
