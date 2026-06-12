@@ -1,5 +1,6 @@
 data "external" "grafana_secret" {
-  program = ["bash", "${path.module}/get_password.sh"]
+  depends_on = [module.aks]
+  program    = ["bash", "${path.module}/get_password.sh"]
 }
 
 output "grafana_admin_password" {
