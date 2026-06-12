@@ -1,11 +1,3 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "3.0.2"
-    }
-  }
-}
 resource "null_resource" "kube-config" {
 
   depends_on = [azurerm_kubernetes_cluster_node_pool.pool1]
