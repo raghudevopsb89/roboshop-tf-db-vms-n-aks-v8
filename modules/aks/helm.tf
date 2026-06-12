@@ -52,5 +52,12 @@ resource "helm_release" "external_dns" {
   chart      = "external-dns"
   name       = "external-dns"
   repository = "https://kubernetes-sigs.github.io/external-dns"
+
+  values = [
+    yamlencode({
+      provider = { name = "azure" }
+    })
+  ]
+
 }
 
