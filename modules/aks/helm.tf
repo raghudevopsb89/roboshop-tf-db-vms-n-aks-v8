@@ -43,6 +43,37 @@ resource "helm_release" "prometheus_stack" {
           paths            = ["/"]
           pathType         = "Prefix"
         }
+        prometheusSpec = {
+          additionalScrapeConfigs = [
+            {
+              job_name = "azure-vms"
+              azure_sd_configs = [
+                {
+                  subscription_id = "3f2e42e1-ca06-4a99-8c56-be8d8ba306db"
+                  tenant_id       = "229f3fa3-57f3-4e2c-852f-24b7bf512640"
+                  client_id       = data.azurerm_key_vault_secret.PrometheusClientID.value
+                  client_secret   = data.azurerm_key_vault_secret.PrometheusClientPassword.value
+                  port            = 9100
+                  resource_group  = var.rg_name
+                }
+              ]
+              relabel_configs = [
+                {
+                  source_labels = ["__meta_azure_machine_name"]
+                  target_label  = "instance_name"
+                },
+                {
+                  source_labels = ["__meta_azure_machine_resource_group"]
+                  target_label  = "resource_group"
+                },
+                {
+                  source_labels = ["__meta_azure_machine_location"]
+                  target_label  = "region"
+                }
+              ]
+            }
+          ]
+        }
       }
     })
   ]
