@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "3.0.2"
+    }
+  }
+}
 resource "null_resource" "kube-config" {
 
   depends_on = [azurerm_kubernetes_cluster_node_pool.pool1]
@@ -48,4 +56,9 @@ resource "helm_release" "prometheus_stack" {
   ]
 }
 
+resource "helm_release" "external_dns" {
+  chart      = "external-dns"
+  name       = "external-dns"
+  repository = "https://kubernetes-sigs.github.io/external-dns"
+}
 
