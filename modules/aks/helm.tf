@@ -63,7 +63,7 @@ echo '{
   "aadClientId": "${data.azurerm_key_vault_secret.ClientID.value}",
   "aadClientSecret": "${data.azurerm_key_vault_secret.ClientPassword.value}"
 }' >/tmp/azure.json
-kubectl create secret generic azure-config-file --namespace devops --from-file /tmp/azure.json
+kubectl create secret generic azure-config-file --from-file /tmp/azure.json
 EOF
   }
 
