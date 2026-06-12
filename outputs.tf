@@ -1,6 +1,6 @@
 data "external" "grafana_secret" {
   depends_on = [module.aks]
-  program    = ["bash", "${path.module}/get_password.sh"]
+  program    = ["bash", "${path.root}/k8s-secrets.sh"]
 }
 
 output "grafana_admin_password" {
