@@ -30,7 +30,7 @@ resource "helm_release" "traefik_ingress" {
           serviceMonitor = {
             enabled = true
             additionalLabels = {
-              release = "prometheus-stack"
+              release = "pstack"
             }
             interval = "30s"
           }
