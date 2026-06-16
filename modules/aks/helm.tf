@@ -14,6 +14,11 @@ resource "helm_release" "traefik_ingress" {
   name       = "traefik"
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
+
+  values = [
+    file("${path.module}/helm-values/traefik.yml")
+  ]
+
 }
 
 resource "helm_release" "prometheus_stack" {
