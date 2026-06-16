@@ -15,7 +15,6 @@ resource "helm_release" "traefik_ingress" {
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
 
-  # Fix the nesting inside the values parameter
   values = [
     yamlencode({
       metrics = {
@@ -26,13 +25,19 @@ resource "helm_release" "traefik_ingress" {
           addRoutersLabels     = true
           addServicesLabels    = true
 
-          # NEST THE SERVICEMONITOR HERE
+          # 1. Enable a clean, dedicated service for metrics scraping
+          service = {
+            enabled = true
+          }
+
+          # 2. Match your Prometheus Operator label selector exactly
           serviceMonitor = {
             enabled = true
             additionalLabels = {
-              release = "pstack"
+              release = "pstack" # <-- CHANGED TO MATCH YOUR CLUSTER
             }
-            interval = "30s"
+            interval    = "30s"
+            honorLabels = true
           }
         }
       }
