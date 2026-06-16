@@ -15,8 +15,37 @@ resource "helm_release" "traefik_ingress" {
   repository = "https://traefik.github.io/charts"
   chart      = "traefik"
 
+  # Fix the nesting inside the values parameter
   values = [
-    file("${path.module}/helm-values/traefik.yml")
+    yamlencode({
+      metrics = {
+        prometheus = {
+          enabled              = true
+          entryPoint           = "metrics"
+          addEntryPointsLabels = true
+          addRoutersLabels     = true
+          addServicesLabels    = true
+
+          # NEST THE SERVICEMONITOR HERE
+          serviceMonitor = {
+            enabled = true
+            additionalLabels = {
+              release = "prometheus-stack"
+            }
+            interval = "30s"
+          }
+        }
+      }
+      ports = {
+        metrics = {
+          port = 9100
+          expose = {
+            default = true
+          }
+          exposedPort = 9100
+        }
+      }
+    })
   ]
 
 }
