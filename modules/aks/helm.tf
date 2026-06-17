@@ -57,7 +57,7 @@ resource "helm_release" "traefik_ingress" {
 
 resource "helm_release" "prometheus_stack" {
 
-  depends_on = [null_resource.kube-config, helm_release.traefik_ingress, helm_release.external_dns]
+  depends_on = [null_resource.kube-config]
 
   name       = "pstack"
   repository = "oci://ghcr.io/prometheus-community/charts"
