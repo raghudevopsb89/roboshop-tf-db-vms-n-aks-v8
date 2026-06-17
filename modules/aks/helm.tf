@@ -9,7 +9,7 @@ resource "null_resource" "kube-config" {
 
 resource "helm_release" "traefik_ingress" {
 
-  depends_on = [null_resource.kube-config]
+  depends_on = [null_resource.kube-config, helm_release.prometheus_stack]
 
   name       = "traefik"
   repository = "https://traefik.github.io/charts"
