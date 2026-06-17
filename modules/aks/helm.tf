@@ -17,12 +17,10 @@ resource "helm_release" "traefik_ingress" {
 
   values = [
     yamlencode({
-      logs = {
-        access = {
-          enabled = true
-          format  = "json" # Highly recommended format for logging
-        }
-      }
+      additionalArguments = [
+        "--accesslog=true",
+        "--accesslog.format=json"
+      ]
       metrics = {
         prometheus = {
           enabled              = true
