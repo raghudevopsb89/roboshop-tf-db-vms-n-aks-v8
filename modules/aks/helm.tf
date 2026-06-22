@@ -211,3 +211,18 @@ resource "local_file" "prom-input" {
     }
   })
 }
+
+
+resource "helm_release" "file-beat" {
+
+  depends_on = [null_resource.kube-config]
+
+  name       = "filebeat"
+  repository = "https://helm.elastic.co"
+  chart      = "filebeat"
+
+  values = [
+    file("${path.module}/helm-values/filebeat.yml")
+  ]
+}
+
