@@ -42,7 +42,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "pool1" {
   name                  = "pool1"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
   vm_size               = "Standard_D2s_v3"
-  node_count            = 2
+  node_count            = 4
   vnet_subnet_id        = var.subnet_id
 
   lifecycle {
