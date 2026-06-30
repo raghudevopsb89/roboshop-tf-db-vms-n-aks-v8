@@ -69,6 +69,11 @@ resource "helm_release" "prometheus_stack" {
 
   values = [
     yamlencode({
+
+      kubeProxy = {
+        enabled = true
+      }
+
       grafana = {
         ingress = {
           enabled          = true
