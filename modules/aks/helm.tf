@@ -84,6 +84,7 @@ resource "helm_release" "prometheus_stack" {
         }
       }
 
+      # --- Alertmanager with Slack Config ---
       alertmanager = {
         enabled = true
         ingress = {
@@ -92,6 +93,30 @@ resource "helm_release" "prometheus_stack" {
           hosts            = ["alertmanager-${var.env}.rdevopsb89.online"]
           paths            = ["/"]
           pathType         = "Prefix"
+        }
+        config = {
+          route = {
+            group_by        = ["alertname"]
+            group_wait      = "30s"
+            group_interval  = "5m"
+            repeat_interval = "12h"
+            receiver        = "slack-notifications" # Default receiver
+          }
+          receivers = [
+            {
+              name = "slack-notifications"
+              slack_configs = [
+                {
+                  # Put your actual Slack Webhook URL or reference a secret variable here
+                  api_url       = var.slack_url
+                  channel       = "#alerts"
+                  send_resolved = true
+                  icon_emoji    = ":bell:"
+                  text          = "Summary: {{ .CommonAnnotations.summary }}\nDescription: {{ .CommonAnnotations.description }}"
+                }
+              ]
+            }
+          ]
         }
       }
 
