@@ -84,7 +84,6 @@ resource "helm_release" "prometheus_stack" {
         }
       }
 
-      # --- Alertmanager with Slack Config ---
       alertmanager = {
         enabled = true
         ingress = {
@@ -94,25 +93,39 @@ resource "helm_release" "prometheus_stack" {
           paths            = ["/"]
           pathType         = "Prefix"
         }
+
+        # This block directly replaces the default configuration you see in the pod
         config = {
+          global = {
+            resolve_timeout = "5m"
+          }
           route = {
-            group_by        = ["alertname"]
+            receiver        = "slack-notifications" # Overwrites "null"
+            group_by        = ["namespace", "alertname"]
             group_wait      = "30s"
             group_interval  = "5m"
             repeat_interval = "12h"
-            receiver        = "slack-notifications" # Default receiver
+
+            # Keeps the Watchdog alert muted or routes it normally
+            routes = [
+              {
+                receiver = "null"
+                matchers = ["alertname=\"Watchdog\""]
+              }
+            ]
           }
           receivers = [
+            {
+              name = "null" # Keeps the default null receiver intact
+            },
             {
               name = "slack-notifications"
               slack_configs = [
                 {
-                  # Put your actual Slack Webhook URL or reference a secret variable here
                   api_url       = var.slack_url
-                  channel       = "	#all-raghudevopsb89"
+                  channel       = "#all-raghudevopsb89"
                   send_resolved = true
-                  icon_emoji    = ":bell:"
-                  text          = "Summary: {{ .CommonAnnotations.summary }}\nDescription: {{ .CommonAnnotations.description }}"
+                  text          = "Alert: {{ .CommonAnnotations.summary }}\nDescription: {{ .CommonAnnotations.description }}"
                 }
               ]
             }
