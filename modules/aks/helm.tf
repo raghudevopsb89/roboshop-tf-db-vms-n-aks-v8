@@ -109,7 +109,7 @@ resource "helm_release" "prometheus_stack" {
                 {
                   # Put your actual Slack Webhook URL or reference a secret variable here
                   api_url       = var.slack_url
-                  channel       = "#alerts"
+                  channel       = "	#all-raghudevopsb89"
                   send_resolved = true
                   icon_emoji    = ":bell:"
                   text          = "Summary: {{ .CommonAnnotations.summary }}\nDescription: {{ .CommonAnnotations.description }}"
