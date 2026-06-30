@@ -78,6 +78,18 @@ resource "helm_release" "prometheus_stack" {
           pathType         = "Prefix"
         }
       }
+
+      alertmanager = {
+        enabled = true
+        ingress = {
+          enabled          = true
+          ingressClassName = "traefik"
+          hosts            = ["alertmanager-${var.env}.rdevopsb89.online"]
+          paths            = ["/"]
+          pathType         = "Prefix"
+        }
+      }
+
       prometheus = {
         ingress = {
           enabled          = true
