@@ -105,19 +105,8 @@ resource "helm_release" "prometheus_stack" {
             group_wait      = "30s"
             group_interval  = "5m"
             repeat_interval = "12h"
-
-            # Keeps the Watchdog alert muted or routes it normally
-            routes = [
-              {
-                receiver = "null"
-                matchers = ["alertname=\"Watchdog\""]
-              }
-            ]
           }
           receivers = [
-            {
-              name = "null" # Keeps the default null receiver intact
-            },
             {
               name = "slack-notifications"
               slack_configs = [
