@@ -282,7 +282,29 @@ resource "local_file" "prom-input" {
 # }
 
 ## External Secrets Helm chart secret
+resource "null_resource" "external-secret" {
+  depends_on = [
+    null_resource.kube-config
+  ]
+
+  provisioner "local-exec" {
+    command = <<EOF
+echo '{
+  "tenantId": "229f3fa3-57f3-4e2c-852f-24b7bf512640",
+  "subscriptionId": "3f2e42e1-ca06-4a99-8c56-be8d8ba306db",
+  "resourceGroup": "${var.rg_name}",
+  "aadClientId": "${data.azurerm_key_vault_secret.ExternalSecretClientID.value}",
+  "aadClientSecret": "${data.azurerm_key_vault_secret.ExternalSecretClientPassword.value}"
+}' >/tmp/azure1.json
+kubectl create secret generic azure-secret-sp --from-file /tmp/azure1.json
+EOF
+  }
+
+}
+
 resource "helm_release" "external_secrets" {
+
+  depends_on = [null_resource.external-secret]
 
   chart      = "external-secrets"
   name       = "external-secrets"
