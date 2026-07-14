@@ -267,17 +267,52 @@ resource "local_file" "prom-input" {
   })
 }
 
+# ELK Server , we kept off, hence commented
+# resource "helm_release" "file-beat" {
+#
+#   depends_on = [null_resource.kube-config]
+#
+#   name       = "filebeat"
+#   repository = "https://helm.elastic.co"
+#   chart      = "filebeat"
+#
+#   values = [
+#     file("${path.module}/helm-values/filebeat.yml")
+#   ]
+# }
 
-resource "helm_release" "file-beat" {
+## External Secrets Helm chart secret
+resource "null_resource" "external-secret" {
+  depends_on = [
+    null_resource.kube-config
+  ]
 
-  depends_on = [null_resource.kube-config]
+  provisioner "local-exec" {
+    command = <<EOF
+echo '{
+  "tenantId": "229f3fa3-57f3-4e2c-852f-24b7bf512640",
+  "subscriptionId": "3f2e42e1-ca06-4a99-8c56-be8d8ba306db",
+  "resourceGroup": "${var.rg_name}",
+  "aadClientId": "${data.azurerm_key_vault_secret.ExternalSecretClientID.value}",
+  "aadClientSecret": "${data.azurerm_key_vault_secret.ExternalSecretClientPassword.value}"
+}' >/tmp/azure1.json
+kubectl create secret generic azure-config-file --from-file /tmp/azure1.json
+EOF
+  }
 
-  name       = "filebeat"
-  repository = "https://helm.elastic.co"
-  chart      = "filebeat"
+}
+
+resource "helm_release" "external_secrets" {
+
+  depends_on = [null_resource.external-secret]
+
+  chart      = "external-secrets"
+  name       = "external-secrets"
+  repository = "https://charts.external-secrets.io"
 
   values = [
-    file("${path.module}/helm-values/filebeat.yml")
+    file("${path.module}/helm-values/external-secrets.yml")
   ]
 }
+
 
