@@ -18,8 +18,8 @@ resource "azurerm_linux_virtual_machine" "main" {
   resource_group_name             = data.azurerm_resource_group.main.name
   network_interface_ids           = [azurerm_network_interface.main[count.index].id]
   size                            = var.vm_size
-  admin_password                  = "DevOps@123456"
-  admin_username                  = "devops"
+  admin_password                  = data.azurerm_key_vault_secret.ssh_password.value
+  admin_username                  = data.azurerm_key_vault_secret.ssh_username.value
   source_image_id                 = var.image_id
   disable_password_authentication = false
   secure_boot_enabled             = true
