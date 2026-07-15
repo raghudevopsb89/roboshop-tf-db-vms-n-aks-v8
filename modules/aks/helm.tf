@@ -289,7 +289,7 @@ resource "null_resource" "external-secret" {
 
   provisioner "local-exec" {
     command = <<EOF
-kubectl create secret generic azure-secret-sp --from-literal=ClientID=984e8346-9453-44a8-8fe6-054fbbd174ce   --from-literal=ClientSecret='${data.azurerm_key_vault_secret.ExternalSecretClientPassword}'
+kubectl create secret generic azure-secret-sp --from-literal=ClientID=984e8346-9453-44a8-8fe6-054fbbd174ce   --from-literal=ClientSecret='${data.azurerm_key_vault_secret.ExternalSecretClientPassword.value}'
 EOF
   }
 
