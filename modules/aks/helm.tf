@@ -289,14 +289,7 @@ resource "null_resource" "external-secret" {
 
   provisioner "local-exec" {
     command = <<EOF
-echo '{
-  "tenantId": "229f3fa3-57f3-4e2c-852f-24b7bf512640",
-  "subscriptionId": "3f2e42e1-ca06-4a99-8c56-be8d8ba306db",
-  "resourceGroup": "${var.rg_name}",
-  "aadClientId": "${data.azurerm_key_vault_secret.ExternalSecretClientID.value}",
-  "aadClientSecret": "${data.azurerm_key_vault_secret.ExternalSecretClientPassword.value}"
-}' >/tmp/azure1.json
-kubectl create secret generic azure-secret-sp --from-file /tmp/azure1.json
+kubectl create secret generic azure-secret-sp --from-literal=ClientID=984e8346-9453-44a8-8fe6-054fbbd174ce   --from-literal=ClientSecret='${data.azurerm_key_vault_secret.ExternalSecretClientPassword}'
 EOF
   }
 
