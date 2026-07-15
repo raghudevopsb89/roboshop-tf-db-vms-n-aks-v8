@@ -282,30 +282,30 @@ resource "local_file" "prom-input" {
 # }
 
 ## External Secrets Helm chart secret
-# resource "null_resource" "external-secret" {
-#   depends_on = [
-#     null_resource.kube-config
-#   ]
-#
-#   provisioner "local-exec" {
-#     command = <<EOF
-# kubectl create secret generic azure-secret-sp --from-literal=ClientID=984e8346-9453-44a8-8fe6-054fbbd174ce   --from-literal=ClientSecret='${data.azurerm_key_vault_secret.ExternalSecretClientPassword}'
-# EOF
-#   }
-#
-# }
-#
-# resource "helm_release" "external_secrets" {
-#
-#   depends_on = [null_resource.external-secret]
-#
-#   chart      = "external-secrets"
-#   name       = "external-secrets"
-#   repository = "https://charts.external-secrets.io"
-#
-#   values = [
-#     file("${path.module}/helm-values/external-secrets.yml")
-#   ]
-# }
-#
-#
+resource "null_resource" "external-secret" {
+  depends_on = [
+    null_resource.kube-config
+  ]
+
+  provisioner "local-exec" {
+    command = <<EOF
+kubectl create secret generic azure-secret-sp --from-literal=ClientID=984e8346-9453-44a8-8fe6-054fbbd174ce   --from-literal=ClientSecret='${data.azurerm_key_vault_secret.ExternalSecretClientPassword}'
+EOF
+  }
+
+}
+
+resource "helm_release" "external_secrets" {
+
+  depends_on = [null_resource.external-secret]
+
+  chart      = "external-secrets"
+  name       = "external-secrets"
+  repository = "https://charts.external-secrets.io"
+
+  values = [
+    file("${path.module}/helm-values/external-secrets.yml")
+  ]
+}
+
+
